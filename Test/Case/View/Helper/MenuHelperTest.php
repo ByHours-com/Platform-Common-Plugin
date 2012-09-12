@@ -8,16 +8,25 @@ App::uses('MenuHelper', 'Common.View/Helper');
  */
 class MenuHelperTest extends CakeTestCase {
 
+/**
+ * setupBeforeClass
+ *
+ * Manipulate the Menu Helper so that the _data property is publicallly accessible
+ * This permits testing the internal state of the class without creating a test
+ * double
+ *
+ * @return void
+ */
 	public static function setupBeforeClass() {
 		$class = new ReflectionClass('MenuHelper');
 		$property = $class->getProperty('_data');
 		$property->setAccessible(true);
-
-		require APP . 'Config/routes.php';
 	}
 
 /**
  * setUp method
+ *
+ * Se the request info to something innocuous but valid, link the helper to a view instance
  *
  * @return void
  */
@@ -44,6 +53,11 @@ class MenuHelperTest extends CakeTestCase {
 		parent::tearDown();
 	}
 
+/**
+ * testAdd
+ *
+ * @return void
+ */
 	public function testAdd() {
 		$this->Menu->add('title', '/url');
 		$expected = array (
@@ -57,6 +71,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $this->Menu->_data);
 	}
 
+/**
+ * testAddMultiple
+ *
+ * @return void
+ */
 	public function testAddMultiple() {
 		$this->Menu->add('title', '/url');
 		$this->Menu->add('title2', '/url/2');
@@ -75,6 +94,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $this->Menu->_data);
 	}
 
+/**
+ * testAddMultipleArray
+ *
+ * @return void
+ */
 	public function testAddMultipleArray() {
 		$this->Menu->add(array(
 			array('title', '/url'),
@@ -95,6 +119,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $this->Menu->_data);
 	}
 
+/**
+ * testAddMultipleIndexedArray
+ *
+ * @return void
+ */
 	public function testAddMultipleIndexedArray() {
 		$this->Menu->add(array(
 			array('title' => 'title', 'url' => '/url'),
@@ -114,6 +143,12 @@ class MenuHelperTest extends CakeTestCase {
 		);
 		$this->assertSame($expected, $this->Menu->_data);
 	}
+
+/**
+ * testAddDuplicateUrl
+ *
+ * @return void
+ */
 	public function testAddDuplicateUrl() {
 		$this->Menu->add('title', '/url');
 		$this->Menu->add('title', '/url');
@@ -132,6 +167,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $this->Menu->_data);
 	}
 
+/**
+ * testDisplay
+ *
+ * @return void
+ */
 	public function testDisplay() {
 		$this->Menu->add(array(
 			array('title', '/url'),
@@ -142,6 +182,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayWithOptions
+ *
+ * @return void
+ */
 	public function testDisplayWithOptions() {
 		$this->Menu->add(array(
 			array('title', '/url'),
@@ -152,6 +197,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayWithOptionsAssumeSection
+ *
+ * @return void
+ */
 	public function testDisplayWithOptionsAssumeSection() {
 		$this->Menu->add(array(
 			array('title', '/url'),
@@ -162,6 +212,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayNested
+ *
+ * @return void
+ */
 	public function testDisplayNested() {
 		$this->Menu->add(array(
 			array('title', '/url'),
@@ -173,6 +228,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayWithHereExact
+ *
+ * @return void
+ */
 	public function testDisplayWithHereExact() {
 		Router::setRequestInfo(array(
 			array('controller' => 'foo', 'action' => 'bar'),
@@ -201,6 +261,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayWithHereAction
+ *
+ * @return void
+ */
 	public function testDisplayWithHereAction() {
 		Router::setRequestInfo(array(
 			array('controller' => 'posts', 'action' => 'action', 'foo'),
@@ -229,6 +294,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayWithHereController
+ *
+ * @return void
+ */
 	public function testDisplayWithHereController() {
 		Router::setRequestInfo(array(
 			array('controller' => 'comments', 'action' => 'action'),
@@ -257,6 +327,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayWithHerePlugin
+ *
+ * @return void
+ */
 	public function testDisplayWithHerePlugin() {
 		Router::setRequestInfo(array(
 			array('plugin' => 'cms', 'controller' => 'cms', 'action' => 'action'),
@@ -285,6 +360,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testDisplayWithHerePrefix
+ *
+ * @return void
+ */
 	public function testDisplayWithHerePrefix() {
 		Router::setRequestInfo(array(
 			array('admin' => true, 'prefix' => 'admin', 'controller' => 'users', 'action' => 'action'),
@@ -313,6 +393,11 @@ class MenuHelperTest extends CakeTestCase {
 		$this->assertSame($expected, $result);
 	}
 
+/**
+ * testSection
+ *
+ * @return void
+ */
 	public function testSection() {
 		$section = $this->Menu->section();
 		$this->assertSame('default', $section);
