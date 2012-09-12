@@ -121,6 +121,11 @@ class MenuHelper extends AppHelper {
 			return;
 		}
 
+		if (is_callable($title)) {
+			$options['callback'] = $title;
+			$title = rand();
+		}
+
 		$uniqueKey = Router::url($url);
 		if (isset($this->_data[$this->_section][$uniqueKey])) {
 			$uniqueKey .= $title;
@@ -131,12 +136,36 @@ class MenuHelper extends AppHelper {
 			unset($options['under']);
 			$options['url'] = $url;
 			$options['title'] = $title;
-			$this->_data[$this->_section][$parentKey]['children'][$uniqueKey] = $options;
+			$this->_data[$this->_section][$parentKey]['children']['items'][$uniqueKey] = $options;
 			return;
 		}
 
 		$options['url'] = $url;
 		$options['title'] = $title;
+
+		$children = array();
+		if (!empty($options['children'])) {
+			$childOptions = array();
+			foreach ($options['children'] as $k => $row) {
+				if (!is_numeric($k)) {
+					$childOptions[$k] = $row;
+				}
+				if (array_key_exists('url', $row) || array_key_exists('callback', $row)) {
+					$children[] = $row;
+				} else {
+					$row += array(1 => null, 2 => array());
+					$children[] = array(
+						'url' => $row[0],
+						'title' => $row[1],
+						'options' => $row[2],
+					);
+				}
+			}
+			$options['children'] = array(
+				'options' => $childOptions,
+				'items' => $children
+			);
+		}
 		$this->_data[$this->_section][$uniqueKey] = $options;
 	}
 
@@ -165,11 +194,8 @@ class MenuHelper extends AppHelper {
 			unset($options['mode']);
 		}
 
-		$contents = $this->_display($this->_data[$this->_section]);
+		$return = $this->_display($this->_data[$this->_section], $options);
 		unset($this->_data[$this->_section]);
-		$options['escape'] = false;
-		$return = $this->Html->tag('ul', $contents, $options);
-
 		$this->reset($this->_section);
 		return $return;
 	}
@@ -242,13 +268,17 @@ class MenuHelper extends AppHelper {
  * Return the inner content for the menu - the li items (nested if appropraite)
  *
  * @param array $items
+ * @param array $options
  * @return string
  */
-	protected function _display($items) {
+	protected function _display($items, $options = array()) {
 		$return = '';
 		foreach ($items as $item) {
 			$return .= $this->_displayItem($item);
 		}
+
+		$options['escape'] = false;
+		$return = $this->Html->tag('ul', $return, $options);
 		return $return;
 	}
 
@@ -261,22 +291,35 @@ class MenuHelper extends AppHelper {
  * @return string
  */
 	protected function _displayItem($item) {
-		$itemOptions = $item;
-		unset($itemOptions['title'], $itemOptions['url'], $itemOptions['children']);
-		$itemContents = $this->Html->link($item['title'], $item['url']);
-		if (!empty($item['children'])) {
-			$itemContents .= $this->_display($item['children']);
-		}
+		$options = $item;
+		unset($options['title'], $options['url'], $options['children'], $options['callback']);
 
-		$itemOptions['escape'] = false;
-		if ($this->_isActive($item)) {
-			if (empty($itemOptions['class'])) {
-				$itemOptions['class'] = 'active';
+		if (!empty($item['callback']) && is_callable($item['callback'])) {
+			$callback = $item['callback'];
+			unset($item['callback']);
+			$contents = $callback($this, $item);
+		} else {
+			if (empty($item['url'])) {
+				$contents = $item['title'];
 			} else {
-				$itemOptions['class'] .= ' active';
+				$contents = $this->Html->link($item['title'], $item['url']);
+				$options['escape'] = false;
+			}
+			if (!empty($item['children'])) {
+				$childOptions = isset($item['children']['options']) ?: array();
+				$contents .= $this->_display($item['children']['items'], $childOptions);
+			}
+
+			if ($this->_isActive($item)) {
+				if (empty($options['class'])) {
+					$options['class'] = 'active';
+				} else {
+					$options['class'] .= ' active';
+				}
 			}
 		}
-		return $this->Html->tag('li', $itemContents, $itemOptions);
+
+		return $this->Html->tag('li', $contents, $options);
 	}
 
 /**

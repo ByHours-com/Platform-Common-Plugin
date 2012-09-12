@@ -183,6 +183,23 @@ class MenuHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testDisplayCallback
+ *
+ * @return void
+ */
+	public function testDisplayCallback() {
+		$this->Menu->add(array(
+			array('title', '/url'),
+			array(function() { return "<span>Only <em>hippies</em> use semantic markup</span>"; })
+		));
+		$expected = '<ul>' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><span>Only <em>hippies</em> use semantic markup</span></li></ul>';
+		$result = $this->Menu->display();
+		$this->assertSame($expected, $result);
+	}
+
+/**
  * testDisplayWithOptions
  *
  * @return void
@@ -223,7 +240,12 @@ class MenuHelperTest extends CakeTestCase {
 			array('title2', '/url/2'),
 			array('title1.1', '/url/1', array('under' => '/url')),
 		));
-		$expected = '<ul><li><a href="/url">title</a><li><a href="/url/1">title1.1</a></li></li><li><a href="/url/2">title2</a></li></ul>';
+		$expected = '<ul>' .
+			'<li><a href="/url">title</a><ul>' .
+				'<li><a href="/url/1">title1.1</a></li>' .
+			'</ul></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
 		$result = $this->Menu->display();
 		$this->assertSame($expected, $result);
 	}
