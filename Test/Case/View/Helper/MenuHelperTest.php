@@ -497,7 +497,7 @@ class MenuHelperTest extends CakeTestCase {
 			'</ul>';
 
 		$result = $this->Menu->display(array(
-			'active' => function($item) { return $item['url']['x'] === 3; }
+			'active' => function($View, $item) { return $item['url']['x'] === 3; }
 		));
 		$this->assertSame($expected, $result);
 	}

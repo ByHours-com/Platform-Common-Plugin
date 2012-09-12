@@ -26,7 +26,7 @@ class MenuHelper extends AppHelper {
  *     plugin
  *     prefix
  *
- * It can also be set to a callback, which accepts an item and returns a boolean
+ * It can also be set to a callback, which accepts ($View, $item) and returns a boolean
  *
  * @var string
  */
@@ -112,7 +112,9 @@ class MenuHelper extends AppHelper {
 	public function add($title, $url = null, $options = array()) {
 		if (is_array($title)) {
 			foreach ($title as $row) {
-				if (array_key_exists('url', $row)) {
+				if (array_key_exists('callback', $row)) {
+					$this->add($row['callback'], null, $row);
+				} elseif (array_key_exists('url', $row)) {
 					$row += array('options' => array());
 					$this->add($row['title'], $row['url'], $row['options']);
 				} else {
@@ -315,7 +317,7 @@ class MenuHelper extends AppHelper {
 		if (!empty($item['callback']) && is_callable($item['callback'])) {
 			$callback = $item['callback'];
 			unset($item['callback']);
-			$contents = $callback($this, $item);
+			$contents = $callback($this->_View, $item);
 		} else {
 			if (empty($item['url'])) {
 				$contents = $item['title'];
@@ -351,7 +353,7 @@ class MenuHelper extends AppHelper {
 	protected function _isActive($item) {
 		if (is_callable($this->_activeMode)) {
 			$callback = $this->_activeMode;
-			return $callback($item);
+			return $callback($this->_View, $item);
 		}
 		if ($this->_activeMode === 'exact') {
 			$url = Router::normalize($item['url']);
