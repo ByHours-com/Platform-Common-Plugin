@@ -371,7 +371,7 @@ class MenuHelperTest extends CakeTestCase {
 			'<li><a href="/a/b/c">Exact</a></li>' .
 			'</ul>';
 
-		$result = $this->Menu->display(array('mode' => 'action'));
+		$result = $this->Menu->display(array('active' => 'action'));
 		$this->assertSame($expected, $result);
 	}
 
@@ -404,7 +404,7 @@ class MenuHelperTest extends CakeTestCase {
 			'<li><a href="/a/b/c">Exact</a></li>' .
 			'</ul>';
 
-		$result = $this->Menu->display(array('mode' => 'controller'));
+		$result = $this->Menu->display(array('active' => 'controller'));
 		$this->assertSame($expected, $result);
 	}
 
@@ -437,7 +437,7 @@ class MenuHelperTest extends CakeTestCase {
 			'<li><a href="/a/b/c">Exact</a></li>' .
 			'</ul>';
 
-		$result = $this->Menu->display(array('mode' => 'plugin'));
+		$result = $this->Menu->display(array('active' => 'plugin'));
 		$this->assertSame($expected, $result);
 	}
 
@@ -470,7 +470,35 @@ class MenuHelperTest extends CakeTestCase {
 			'<li><a href="/a/b/c">Exact</a></li>' .
 			'</ul>';
 
-		$result = $this->Menu->display(array('mode' => 'prefix'));
+		$result = $this->Menu->display(array('active' => 'prefix'));
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * testDisplayWithHereCallback
+ *
+ * @return void
+ */
+	public function testDisplayWithHereCallback() {
+		$this->Menu->add(array(
+			array('1', array('x' => 1)),
+			array('2', array('x' => 2)),
+			array('3', array('x' => 3)),
+			array('4', array('x' => 4)),
+			array('5', array('x' => 5)),
+		));
+
+		$expected = '<ul>' .
+			'<li><a href="/posts/action/x:1">1</a></li>' .
+			'<li><a href="/posts/action/x:2">2</a></li>' .
+			'<li class="active"><a href="/posts/action/x:3">3</a></li>' .
+			'<li><a href="/posts/action/x:4">4</a></li>' .
+			'<li><a href="/posts/action/x:5">5</a></li>' .
+			'</ul>';
+
+		$result = $this->Menu->display(array(
+			'active' => function($item) { return $item['url']['x'] === 3; }
+		));
 		$this->assertSame($expected, $result);
 	}
 

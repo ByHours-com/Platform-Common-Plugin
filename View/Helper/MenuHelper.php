@@ -16,6 +16,23 @@ class MenuHelper extends AppHelper {
 	);
 
 /**
+ * _activeMode
+ *
+ * How specific to be when comparing urls to determin the "active" li element.
+ * Possible values, in decreasing order of activeMode:
+ *     exact
+ *     action
+ *     controller
+ *     plugin
+ *     prefix
+ *
+ * It can also be set to a callback, which accepts an item and returns a boolean
+ *
+ * @var string
+ */
+	protected $_activeMode = 'exact';
+
+/**
  * _data
  *
  * Nested array of menu items
@@ -46,21 +63,6 @@ class MenuHelper extends AppHelper {
  * @var string
  */
 	protected $_section = 'default';
-
-/**
- * _sensitivity
- *
- * How specific to be when comparing urls to determin the "active" li element.
- * Possible values, in decreasing order of sensitivity:
- *     exact
- *     action
- *     controller
- *     plugin
- *     prefix
- *
- * @var string
- */
-	protected $_sensitivity = 'exact';
 
 /**
  * __construct
@@ -192,9 +194,9 @@ class MenuHelper extends AppHelper {
 			return;
 		}
 
-		if (!empty($options['mode'])) {
-			$this->_sensitivity = $options['mode'];
-			unset($options['mode']);
+		if (!empty($options['active'])) {
+			$this->_activeMode = $options['active'];
+			unset($options['active']);
 		}
 
 		$return = $this->_display($this->_data[$this->_section], $options);
@@ -232,7 +234,7 @@ class MenuHelper extends AppHelper {
 			unset($this->_data[$this->_section]);
 		}
 		$this->_section = 'default';
-		$this->_sensitivity = 'exact';
+		$this->_activeMode = 'exact';
 	}
 
 /**
@@ -347,7 +349,11 @@ class MenuHelper extends AppHelper {
  * @return bool
  */
 	protected function _isActive($item) {
-		if ($this->_sensitivity === 'exact') {
+		if (is_callable($this->_activeMode)) {
+			$callback = $this->_activeMode;
+			return $callback($item);
+		}
+		if ($this->_activeMode === 'exact') {
 			$url = Router::normalize($item['url']);
 			return $this->_here['url'] === $url;
 		}
@@ -372,7 +378,7 @@ class MenuHelper extends AppHelper {
 			'action'
 		);
 
-		$keys = array_slice($keys, 0, array_search($this->_sensitivity, $keys) + 1);
+		$keys = array_slice($keys, 0, array_search($this->_activeMode, $keys) + 1);
 		$keys = array_merge($keys, Router::prefixes());
 		$keys = array_flip($keys);
 
