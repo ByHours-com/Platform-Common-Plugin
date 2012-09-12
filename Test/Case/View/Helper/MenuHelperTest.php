@@ -475,6 +475,45 @@ class MenuHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testGenerate
+ *
+ * @return void
+ */
+	public function testGenerate() {
+		$expected = '<ul>' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
+
+		$result = $this->Menu->generate(array(
+			array('title', '/url'),
+			array('title2', '/url/2')
+		));
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * testGenerateWithOptions
+ *
+ * @return void
+ */
+	public function testGenerateWithOptions() {
+		$expected = '<ul class="foo" id="bar">' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
+
+		$result = $this->Menu->generate(
+			array(
+				array('title', '/url'),
+				array('title2', '/url/2')
+			),
+			array('class' => 'foo', 'id' => 'bar')
+		);
+		$this->assertSame($expected, $result);
+	}
+
+/**
  * testSection
  *
  * @return void

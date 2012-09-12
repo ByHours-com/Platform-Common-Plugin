@@ -204,6 +204,19 @@ class MenuHelper extends AppHelper {
 	}
 
 /**
+ * generate a menu in one step
+ *
+ * @param mixed $items
+ * @param array $options
+ * @return string
+ */
+	public function generate($items, $options = array()) {
+		$this->section(rand());
+		$this->add($items);
+		return $this->display($this->_section, $options);
+	}
+
+/**
  * reset
  *
  * Reset the helper back to a consistent state. Clears the data for the current section
