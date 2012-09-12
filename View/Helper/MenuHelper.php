@@ -52,11 +52,11 @@ class MenuHelper extends AppHelper {
  *
  * How specific to be when comparing urls to determin the "active" li element.
  * Possible values, in decreasing order of sensitivity:
- * 	exact
- * 	action
- * 	controller
- *  plugin
- * 	prefix
+ *     exact
+ *     action
+ *     controller
+ *     plugin
+ *     prefix
  *
  * @var string
  */

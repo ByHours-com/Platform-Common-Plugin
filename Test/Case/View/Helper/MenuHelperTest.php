@@ -177,7 +177,10 @@ class MenuHelperTest extends CakeTestCase {
 			array('title', '/url'),
 			array('title2', '/url/2')
 		));
-		$expected = '<ul><li><a href="/url">title</a></li><li><a href="/url/2">title2</a></li></ul>';
+		$expected = '<ul>' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
 		$result = $this->Menu->display();
 		$this->assertSame($expected, $result);
 	}
@@ -194,7 +197,8 @@ class MenuHelperTest extends CakeTestCase {
 		));
 		$expected = '<ul>' .
 			'<li><a href="/url">title</a></li>' .
-			'<li><span>Only <em>hippies</em> use semantic markup</span></li></ul>';
+			'<li><span>Only <em>hippies</em> use semantic markup</span></li>' .
+			'</ul>';
 		$result = $this->Menu->display();
 		$this->assertSame($expected, $result);
 	}
@@ -209,7 +213,10 @@ class MenuHelperTest extends CakeTestCase {
 			array('title', '/url'),
 			array('title2', '/url/2')
 		));
-		$expected = '<ul class="foo" id="bar"><li><a href="/url">title</a></li><li><a href="/url/2">title2</a></li></ul>';
+		$expected = '<ul class="foo" id="bar">' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
 		$result = $this->Menu->display('default', array('class' => 'foo', 'id' => 'bar'));
 		$this->assertSame($expected, $result);
 	}
@@ -224,7 +231,10 @@ class MenuHelperTest extends CakeTestCase {
 			array('title', '/url'),
 			array('title2', '/url/2')
 		));
-		$expected = '<ul class="foo" id="bar"><li><a href="/url">title</a></li><li><a href="/url/2">title2</a></li></ul>';
+		$expected = '<ul class="foo" id="bar">' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
 		$result = $this->Menu->display(array('class' => 'foo', 'id' => 'bar'));
 		$this->assertSame($expected, $result);
 	}
