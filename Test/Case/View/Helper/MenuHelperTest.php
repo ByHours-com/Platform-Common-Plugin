@@ -261,6 +261,55 @@ class MenuHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testDisplayNestedChildren
+ *
+ * @return void
+ */
+	public function testDisplayNestedChildren() {
+		$this->Menu->add(array(
+			array('title', '/url', array(
+				'children' => array(
+					array('title1.1', '/url/1'),
+				)
+			)),
+			array('title2', '/url/2'),
+		));
+		$expected = '<ul>' .
+			'<li><a href="/url">title</a><ul>' .
+				'<li><a href="/url/1">title1.1</a></li>' .
+			'</ul></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
+		$result = $this->Menu->display();
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * testDisplayNestedChildrenOptions
+ *
+ * @return void
+ */
+	public function testDisplayNestedChildrenOptions() {
+		$this->Menu->add(array(
+			array('title', '/url', array(
+				'children' => array(
+					'class' => 'blink',
+					array('title1.1', '/url/1'),
+				)
+			)),
+			array('title2', '/url/2'),
+		));
+		$expected = '<ul>' .
+			'<li><a href="/url">title</a><ul class="blink">' .
+				'<li><a href="/url/1">title1.1</a></li>' .
+			'</ul></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</ul>';
+		$result = $this->Menu->display();
+		$this->assertSame($expected, $result);
+	}
+
+/**
  * testDisplayWithHereExact
  *
  * @return void

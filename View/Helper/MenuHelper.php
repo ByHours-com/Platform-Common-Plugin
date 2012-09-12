@@ -149,15 +149,18 @@ class MenuHelper extends AppHelper {
 			foreach ($options['children'] as $k => $row) {
 				if (!is_numeric($k)) {
 					$childOptions[$k] = $row;
+					continue;
 				}
 				if (array_key_exists('url', $row) || array_key_exists('callback', $row)) {
 					$children[] = $row;
 				} else {
 					$row += array(1 => null, 2 => array());
-					$children[] = array(
-						'url' => $row[0],
-						'title' => $row[1],
-						'options' => $row[2],
+					$children[] = array_merge(
+						$row[2],
+						array(
+							'url' => $row[1],
+							'title' => $row[0],
+						)
 					);
 				}
 			}
@@ -306,7 +309,7 @@ class MenuHelper extends AppHelper {
 				$options['escape'] = false;
 			}
 			if (!empty($item['children'])) {
-				$childOptions = isset($item['children']['options']) ?: array();
+				$childOptions = isset($item['children']['options']) ? $item['children']['options'] : array();
 				$contents .= $this->_display($item['children']['items'], $childOptions);
 			}
 
