@@ -157,8 +157,6 @@ class GearmanWorkerTask extends AppShell {
 
 		// Infinite loop of doom until we die!
 		while (true) {
-			$this->hr();
-
 			if (!$this->_triggerEvent('Gearman.beforeWork')) { break; }
 			$this->_worker->work();
 			if (!$this->_triggerEvent('Gearman.afterWork')) { break; }
