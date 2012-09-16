@@ -204,6 +204,24 @@ class MenuHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testDisplayCallbackNoArray
+ *
+ * @return void
+ */
+	public function testDisplayCallbackNoArray() {
+		$this->Menu->add(array(
+			array('title', '/url'),
+			function() { return "<span>Only <em>hippies</em> use semantic markup</span>"; }
+		));
+		$expected = '<ul>' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><span>Only <em>hippies</em> use semantic markup</span></li>' .
+			'</ul>';
+		$result = $this->Menu->display();
+		$this->assertSame($expected, $result);
+	}
+
+/**
  * testDisplayWithOptions
  *
  * @return void
