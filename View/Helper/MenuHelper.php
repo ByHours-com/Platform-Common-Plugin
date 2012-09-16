@@ -112,7 +112,9 @@ class MenuHelper extends AppHelper {
 	public function add($title, $url = null, $options = array()) {
 		if (is_array($title)) {
 			foreach ($title as $row) {
-				if (array_key_exists('callback', $row)) {
+				if (is_callable($row)) {
+					$this->add($row, null, array());
+				} elseif (array_key_exists('callback', $row)) {
 					$this->add($row['callback'], null, $row);
 				} elseif (array_key_exists('url', $row)) {
 					$row += array('options' => array());
