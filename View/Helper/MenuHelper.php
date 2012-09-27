@@ -251,6 +251,10 @@ class MenuHelper extends AppHelper {
  * @return void
  */
 	protected function _add($title, $url, $options, $op = 'append') {
+		if (empty($this->_data[$this->_section])) {
+			$this->_data[$this->_section] = array();
+		}
+
 		if (is_array($title)) {
 			foreach ($title as $row) {
 				if (is_callable($row)) {
