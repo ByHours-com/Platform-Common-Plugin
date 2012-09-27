@@ -110,72 +110,11 @@ class MenuHelper extends AppHelper {
  * @return void
  */
 	public function add($title, $url = null, $options = array()) {
-		if (is_array($title)) {
-			foreach ($title as $row) {
-				if (is_callable($row)) {
-					$this->add($row, null, array());
-				} elseif (array_key_exists('callback', $row)) {
-					$this->add($row['callback'], null, $row);
-				} elseif (array_key_exists('url', $row)) {
-					$row += array('options' => array());
-					$this->add($row['title'], $row['url'], $row['options']);
-				} else {
-					$row += array(1 => null, 2 => array());
-					$this->add($row[0], $row[1], $row[2]);
-				}
-			}
-			return;
-		}
+		return $this->_add($title, $url, $options, 'append');
+	}
 
-		if (is_callable($title)) {
-			$options['callback'] = $title;
-			$title = rand();
-		}
-
-		$uniqueKey = Router::url($url);
-		if (isset($this->_data[$this->_section][$uniqueKey])) {
-			$uniqueKey .= $title;
-		}
-
-		if (!empty($options['under'])) {
-			$parentKey = Router::normalize($options['under']);
-			unset($options['under']);
-			$options['url'] = $url;
-			$options['title'] = $title;
-			$this->_data[$this->_section][$parentKey]['children']['items'][$uniqueKey] = $options;
-			return;
-		}
-
-		$options['url'] = $url;
-		$options['title'] = $title;
-
-		$children = array();
-		if (!empty($options['children'])) {
-			$childOptions = array();
-			foreach ($options['children'] as $k => $row) {
-				if (!is_numeric($k)) {
-					$childOptions[$k] = $row;
-					continue;
-				}
-				if (array_key_exists('url', $row) || array_key_exists('callback', $row)) {
-					$children[] = $row;
-				} else {
-					$row += array(1 => null, 2 => array());
-					$children[] = array_merge(
-						$row[2],
-						array(
-							'url' => $row[1],
-							'title' => $row[0],
-						)
-					);
-				}
-			}
-			$options['children'] = array(
-				'options' => $childOptions,
-				'items' => $children
-			);
-		}
-		$this->_data[$this->_section][$uniqueKey] = $options;
+	public function prepend($title, $url = null, $options = array()) {
+		return $this->_add($title, $url, $options, 'prepend');
 	}
 
 /**
@@ -220,6 +159,22 @@ class MenuHelper extends AppHelper {
 		$this->section(rand());
 		$this->add($items);
 		return $this->display($this->_section, $options);
+	}
+
+/**
+ * hasData
+ *
+ * Does the named section have any data/links in it?
+ *
+ * @param mixed $section
+ * @return void
+ */
+	public function hasData($section = null) {
+		if (is_null($section)) {
+			$section = $this->_section;
+		}
+
+		return !empty($this->_data[$section]);
 	}
 
 /**
@@ -283,6 +238,101 @@ class MenuHelper extends AppHelper {
 			'params' => $params
 		);
 	}
+
+/**
+ * add worker function
+ *
+ * add under, append or prepend a menu item
+ *
+ * @param mixed $title
+ * @param mixed $url
+ * @param mixed $options
+ * @param string $op
+ * @return void
+ */
+	protected function _add($title, $url, $options, $op = 'append') {
+		if (empty($this->_data[$this->_section])) {
+			$this->_data[$this->_section] = array();
+		}
+
+		if (is_array($title)) {
+			foreach ($title as $row) {
+				if (is_callable($row)) {
+					$this->_add($row, null, array(), $op);
+				} elseif (array_key_exists('callback', $row)) {
+					$this->_add($row['callback'], null, $row, $op);
+				} elseif (array_key_exists('url', $row)) {
+					$row += array('options' => array());
+					$this->_add($row['title'], $row['url'], $row['options'], $op);
+				} else {
+					$row += array(1 => null, 2 => array());
+					$this->_add($row[0], $row[1], $row[2], $op);
+				}
+			}
+			return;
+		}
+
+		if (is_callable($title)) {
+			$options['callback'] = $title;
+			$title = rand();
+		}
+
+		$uniqueKey = Router::url($url);
+		if (isset($this->_data[$this->_section][$uniqueKey])) {
+			$uniqueKey .= $title;
+		}
+
+		if (!empty($options['under'])) {
+			$parentKey = Router::normalize($options['under']);
+			unset($options['under']);
+			$options['url'] = $url;
+			$options['title'] = $title;
+			if ($op === 'append') {
+				$this->_data[$this->_section][$parentKey]['children']['items'][$uniqueKey] = $options;
+			} else {
+				$this->_data[$this->_section][$parentKey]['children']['items'] = array($uniqueKey => $options) +
+					$this->_data[$this->_section][$parentKey]['children']['items'];
+			}
+			return;
+		}
+
+		$options['url'] = $url;
+		$options['title'] = $title;
+
+		$children = array();
+		if (!empty($options['children'])) {
+			$childOptions = array();
+			foreach ($options['children'] as $k => $row) {
+				if (!is_numeric($k)) {
+					$childOptions[$k] = $row;
+					continue;
+				}
+				if (array_key_exists('url', $row) || array_key_exists('callback', $row)) {
+					$children[] = $row;
+				} else {
+					$row += array(1 => null, 2 => array());
+					$children[] = array_merge(
+						$row[2],
+						array(
+							'url' => $row[1],
+							'title' => $row[0],
+						)
+					);
+				}
+			}
+			$options['children'] = array(
+				'options' => $childOptions,
+				'items' => $children
+			);
+		}
+
+		if ($op === 'append') {
+			$this->_data[$this->_section][$uniqueKey] = $options;
+		} else {
+			$this->_data[$this->_section] = array($uniqueKey => $options) + $this->_data[$this->_section];
+		}
+	}
+
 
 /**
  * _display
