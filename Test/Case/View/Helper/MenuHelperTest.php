@@ -575,4 +575,27 @@ class MenuHelperTest extends CakeTestCase {
 		$section = $this->Menu->section();
 		$this->assertSame('changed', $section);
 	}
+
+/**
+ * testPrepend
+ *
+ * @return void
+ */
+	public function testPrepend() {
+		$this->Menu->add('title', '/url');
+		$this->Menu->prepend('first', '/first');
+		$expected = array (
+			'default' => Array (
+				'/first' => Array (
+					'url' => '/first',
+					'title' => 'first'
+				),
+				'/url' => Array (
+					'url' => '/url',
+					'title' => 'title'
+				)
+			)
+		);
+		$this->assertSame($expected, $this->Menu->_data);
+	}
 }
