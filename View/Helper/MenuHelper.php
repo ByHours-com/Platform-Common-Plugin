@@ -223,6 +223,22 @@ class MenuHelper extends AppHelper {
 	}
 
 /**
+ * hasData
+ *
+ * Does the named section have any data/links in it?
+ *
+ * @param mixed $section
+ * @return void
+ */
+	public function hasData($section = null) {
+		if (is_null($section)) {
+			$section = $this->_section;
+		}
+
+		return !empty($this->_data[$section]);
+	}
+
+/**
  * reset
  *
  * Reset the helper back to a consistent state. Clears the data for the current section
