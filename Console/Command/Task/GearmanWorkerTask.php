@@ -1,6 +1,8 @@
 <?php
 
 App::uses('AppShell', 'Console/Command');
+App::uses('CakeEvent', 'Event');
+App::uses('CakeEventManager', 'Event');
 
 /**
  * GearmanD Shell task
