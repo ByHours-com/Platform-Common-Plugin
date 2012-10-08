@@ -31,6 +31,10 @@ class Curl {
 		CURLOPT_TIMEOUT			=> 10,	 // Our request should be able to complete within 10 seconds
 		CURLOPT_FOLLOWLOCATION	=> true, // TRUE to follow any "Location: " header that the server sends as part of the HTTP header
 		CURLOPT_MAXREDIRS		=> 10,	 // The maximum amount of HTTP redirections to follow.
+		CURLOPT_IPRESOLVE		=> CURL_IPRESOLVE_V4, // We want IPv4
+		CURLOPT_FORBID_REUSE	=> false, // Allow re-use by default
+		CURLOPT_FRESH_CONNECT	=> false, // Use the cached connections
+		CURLOPT_MAXCONNECTS		=> 5,     // Max number of persistent connections
 	);
 
 /**
