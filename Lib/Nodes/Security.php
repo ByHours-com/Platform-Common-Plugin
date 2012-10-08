@@ -28,7 +28,7 @@ class Security {
 
 		// sign it
 		$payload	= static::_base64UrlEncode(json_encode($data));
-		$sig		= static::_base64UrlEncode(hash_hmac('sha256', $payload, $secret, $raw=true));
+		$sig		= static::_base64UrlEncode(hash_hmac('sha256', $payload, $secret, true));
 
 		return $sig . '.' . $payload;
 	}
@@ -40,6 +40,9 @@ class Security {
 	}
 
 	public static function decrypt($secret, $input, $maxAge = 3600) {
+		if (!strpos($input, '.')) {
+			throw new Exception('Invalid request. (Invalid format)');
+		}
 		list($encodedSig, $encodedEnvelope) = explode('.', $input, 2);
 		$envelope	= json_decode(static::_base64UrlDecode($encodedEnvelope), true);
 		$algorithm	= $envelope['algorithm'];
@@ -52,7 +55,7 @@ class Security {
 			throw new Exception('Invalid request. (Too old.)');
 		}
 
-		if (static::_base64UrlDecode($encodedSig) != hash_hmac('sha256', $encodedEnvelope, $secret, $raw = true)) {
+		if (static::_base64UrlDecode($encodedSig) != hash_hmac('sha256', $encodedEnvelope, $secret,  true)) {
 			throw new Exception('Invalid request. (Invalid signature.)');
 		}
 
