@@ -45,6 +45,13 @@ class Curl {
 	protected $_curlOptions = array();
 
 /**
+ * The current object options
+ *
+ * @var array
+ */
+	protected $_options = array();
+
+/**
  * The response body from an executed HTTP request
  *
  * @var string
@@ -75,16 +82,18 @@ class Curl {
 /**
  * Constructor
  *
- * @param string $url		The URL to query
- * @param array $options	cURL options
+ * @param string $url		 The URL to query
+ * @param array $curlOptions cURL options
+ * @param array $options 	 Object options
  */
-	public function __construct($url = null, $options = array()) {
-		// Merge all options
-		$this->_curlOptions = $options + $this->_defaultCurlOptions;
+	public function __construct($url = null, $curlOptions = array(), $options = array()) {
+		$this->_curlOptions = $curlOptions + $this->_defaultCurlOptions;
 
 		if (!empty($url)) {
 			$this->_curlOptions = array(CURLOPT_URL => $url) + $this->_curlOptions;
 		}
+
+		$this->_options = $options + array('reuseCurlConnection' => true);
 	}
 
 /**
@@ -92,8 +101,17 @@ class Curl {
  *
  * @return mixed
  */
-	public function get() {
+	public function get($data = null) {
+		if (!empty($data)) {
+			if (is_array($data)) {
+				$data = http_build_query($data);
+			}
+
+			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
+		}
+
 		$this->_curlOptions = array(CURLOPT_CUSTOMREQUEST => 'GET') + $this->_curlOptions;
+
 		return $this->exec();
 	}
 
@@ -105,7 +123,11 @@ class Curl {
  */
 	public function post($data = array()) {
 		if (!empty($data)) {
-			$this->_curlOptions = array(CURLOPT_POSTFIELDS => http_build_query($data)) + $this->_curlOptions;
+			if (is_array($data)) {
+				$data = http_build_query($data);
+			}
+
+			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
 		}
 
 		$this->_curlOptions = array(CURLOPT_CUSTOMREQUEST => 'POST') + $this->_curlOptions;
@@ -120,7 +142,11 @@ class Curl {
  */
 	public function put($data = array()) {
 		if (!empty($data)) {
-			$this->_curlOptions = array(CURLOPT_POSTFIELDS => http_build_query($data)) + $this->_curlOptions;
+			if (is_array($data)) {
+				$data = http_build_query($data);
+			}
+
+			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
 		}
 
 		$this->_curlOptions = array(CURLOPT_CUSTOMREQUEST => 'PUT') + $this->_curlOptions;
@@ -146,8 +172,10 @@ class Curl {
 	public function createCurlResource($options = array()) {
 		$this->cleanup();
 
-		$this->_curlResource = curl_init();
-		$this->_curlOptions = array(CURLOPT_HEADERFUNCTION => array($this, 'curlHeaderCallback')) + $this->_curlOptions;
+		if (empty($this->_curlResource)) {
+			$this->_curlResource = curl_init();
+			$this->_curlOptions = array(CURLOPT_HEADERFUNCTION => array($this, 'curlHeaderCallback')) + $this->_curlOptions;
+		}
 
 		curl_setopt_array($this->_curlResource, $this->_curlOptions);
 
@@ -207,7 +235,11 @@ class Curl {
  * @return Curl
  */
 	public function cleanup() {
-		if (empty($this->_curlResource)) {
+		$this->_responseBody = null;
+		$this->_responseHeadersArray = array();
+		$this->_responseHeadersArrayRaw = array();
+
+		if ($this->_options['reuseCurlConnection'] || empty($this->_curlResource)) {
 			return $this;
 		}
 
@@ -368,7 +400,7 @@ class Curl {
 	}
 
 	public function __clone() {
-		$instance = new $this(null, $this->_curlOptions);
+		$instance = new $this(null, $this->_curlOptions, $this->_options);
 		return $instance;
 	}
 }
