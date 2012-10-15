@@ -49,4 +49,4 @@ class Command {
 
 		return compact('stdout', 'stderr', 'exit_code', 'command', 'cwd', 'env');
 	}
-}r
+}
