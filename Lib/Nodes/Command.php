@@ -29,7 +29,7 @@ class Command {
 		while (($buffer = fgets($pipes[1], 1024)) != NULL || ($errbuf = fgets($pipes[2], 1024)) != NULL) {
 			if (!empty($buffer)) {
 				$stdout .= $buffer;
-				CakeLog::out('--> stdout: ' . trim($buffer));
+				CakeLog::debug('--> stdout: ' . trim($buffer));
 			}
 
 			if (!empty($errbuf)) {
