@@ -158,7 +158,15 @@ class Curl {
  *
  * @return mixed
  */
-	public function delete() {
+	public function delete($data = null) {
+		if (!empty($data)) {
+			if (is_array($data)) {
+				$data = http_build_query($data);
+			}
+
+			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
+		}
+
 		$this->_curlOptions = array(CURLOPT_CUSTOMREQUEST => 'DELETE') + $this->_curlOptions;
 		return $this->exec();
 	}
