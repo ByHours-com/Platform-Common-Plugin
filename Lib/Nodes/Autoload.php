@@ -76,7 +76,6 @@ class Autoload {
 			$fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
 		}
 		$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-
 		// Search each path and check if the file exist
 		foreach (self::$_paths as $path) {
 			$fullPath = $path . $fileName;
@@ -100,7 +99,7 @@ class Autoload {
 		if (is_array($path)) {
 			return array_map(array('static', 'addPath'), $path);
 		}
-		static::$_paths[] = $path;
+		static::$_paths[] = realpath($path) . DS;
 	}
 
 /**

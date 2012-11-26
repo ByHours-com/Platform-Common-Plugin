@@ -24,7 +24,7 @@ class SymlinkAssetsShell extends AppShell {
  * @return void
  */
 	public function create() {
-		chdir(WWW_ROOT);
+		chdir(realpath(WWW_ROOT));
 
 		$paths = $this->_getPaths();
 		foreach ($paths as $plugin => $config) {
@@ -63,13 +63,13 @@ class SymlinkAssetsShell extends AppShell {
  * @return void
  */
 	public function remove() {
-		chdir(WWW_ROOT);
+		chdir(realpath(WWW_ROOT));
 
 		$paths = $this->_getPaths();
 		foreach ($paths as $plugin => $config) {
 			$this->out('Processing plugin: <info>' . $plugin . '</info>');
 			if (!file_exists($config['public'])) {
-				$this->out('--> <error>Skipping</error>, symlink does not exists (' . \Nodes\Common::stripRealPaths($config['public']) . ')');
+				$this->out('--> <error>Skipping</error>, symlink does not exists (' . Nodes\Common::stripRealPaths($config['public']) . ')');
 				continue;
 			}
 
