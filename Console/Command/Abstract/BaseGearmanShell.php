@@ -7,7 +7,7 @@
  * @author <mien@nodesagency.no>
  * @copyright Nodes ApS 2010-2012 <tech@nodes.dk>
  */
-abstract class GearmanShell extends AppShell {
+abstract class BaseGearmanShell extends AppShell {
 
 /**
  * Lists of tasks
