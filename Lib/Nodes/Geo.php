@@ -1,6 +1,18 @@
 <?php
 namespace Nodes;
 
+/**
+ * Geo Class
+ *
+ * Utility class for geo related calculations
+ *
+ * Copyright 2010-2012, Nodes ApS. (http://www.nodesagency.com/)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Nodes ApS, 2012
+ */
 class Geo {
 
 /**
@@ -25,13 +37,45 @@ class Geo {
 	const MT = 1000;
 
 /**
-* Calculate the bounding box from one geo point and $dist degrees out
-*
-* @param $dist Degress radius in the circle
-* @param $lat The latitude of the center point
-* @param $lng The longitude of the center point
-* @return array
-*/
+ * getBox
+ *
+ * For the given arguments, return the bounds of the box they contain - throw exceptions
+ * if arguments are missing, malformed or illogical. The bottom right coordinate must be
+ * South east of the top-left coordinate
+ *
+ * @throws \InvalidArgumentException if arguments are missing or malformed
+ * @param mixed $topLeft e.g. 55.5,12,2
+ * @param mixed $bottomRight e.g. 56.6,13.3
+ * @return array
+ */
+	public static function getBox($topLeft, $bottomRight) {
+		if (!strpos($topLeft, ',') || !strpos($bottomRight, ',')) {
+			throw new \InvalidArgumentException("Required arguments missing or malformed");
+		}
+
+		list($lat1, $lng1) = explode(',', $topLeft);
+		list($lat2, $lng2) = explode(',', $bottomRight);
+
+		$return = compact('lat1', 'lat2', 'lng1', 'lng2');
+		foreach ($return as &$val) {
+			$val += 0;
+		}
+
+		if ($lng1 >= $lng2 || $lat1 <= $lat2) {
+			throw new \InvalidArgumentException("Arguments do not define a box ([$topLeft] [$bottomRight]), bottom-right must be south-east of the top-left coordinate");
+		}
+
+		return $return;
+	}
+
+/**
+ * Calculate the bounding box from one geo point and $dist degrees out
+ *
+ * @param $dist Degress radius in the circle
+ * @param $lat The latitude of the center point
+ * @param $lng The longitude of the center point
+ * @return array
+ */
 	public static function getBoundary($dist, $lat, $lng) {
 		static::_findLatBoundary($dist, $lat, $lat1, $lat2);
 		static::_findLonBoundary($dist, $lat, $lng, $lat1, $lat2, $lng1, $lng2);
