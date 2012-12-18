@@ -13,7 +13,7 @@ class GeoTest extends CakeTestCase {
  * @expectedException InvalidArgumentException
  */
 	public function testGetBoxThrowsWithMissingArguments() {
-		\Nodes\Geo::getBox(null, null);
+		Geo::getBox(null, null);
 	}
 
 /**
@@ -22,7 +22,7 @@ class GeoTest extends CakeTestCase {
  * @expectedException InvalidArgumentException
  */
 	public function testGetBoxThrowsWithMalformedTopLeft() {
-		\Nodes\Geo::getBox('5610', '55,11');
+		Geo::getBox('5610', '55,11');
 	}
 
 /**
@@ -31,7 +31,7 @@ class GeoTest extends CakeTestCase {
  * @expectedException InvalidArgumentException
  */
 	public function testGetBoxThrowsWithMalformedBottomRight() {
-		\Nodes\Geo::getBox('56,10', '5511');
+		Geo::getBox('56,10', '5511');
 	}
 
 /**
@@ -40,7 +40,7 @@ class GeoTest extends CakeTestCase {
  * @expectedException InvalidArgumentException
  */
 	public function testGetBoxThrowsWithNoBox() {
-		\Nodes\Geo::getBox('56,11', '55,10');
+		Geo::getBox('56,11', '55,10');
 	}
 
 /**
@@ -54,7 +54,7 @@ class GeoTest extends CakeTestCase {
 			'lng1' => 10,
 			'lng2' => 11
 		);
-		$return = \Nodes\Geo::getBox('56,10', '55,11');
+		$return = Geo::getBox('56,10', '55,11');
 		$this->assertSame($expected, $return);
 	}
 
@@ -69,7 +69,7 @@ class GeoTest extends CakeTestCase {
 			'lng1' => 10.456,
 			'lng2' => 11.456
 		);
-		$return = \Nodes\Geo::getBox('56.123,10.456', '55.123,11.456');
+		$return = Geo::getBox('56.123,10.456', '55.123,11.456');
 		$this->assertSame($expected, $return);
 	}
 
@@ -78,10 +78,10 @@ class GeoTest extends CakeTestCase {
 		$lng = 0;
 
 		$radiusKm = 1;
-		$radiusDeg = 360 * $radiusKm / (\Nodes\Geo::EARTH_RADIUS * 2 * M_PI);
+		$radiusDeg = 360 * $radiusKm / (Geo::EARTH_RADIUS * 2 * M_PI);
 		$diameterDegInnerBox = $radiusDeg * 2;
 
-		$return = \Nodes\Geo::getBoundary($diameterDegInnerBox, $lat, $lng);
+		$return = Geo::getBoundary($diameterDegInnerBox, $lat, $lng);
 		foreach ($return as &$val) {
 			$val = number_format($val, 6);
 		}
@@ -101,14 +101,14 @@ class GeoTest extends CakeTestCase {
 		$this->assertSame($expected, $return);
 
 		$distances = array(
-			'n' => \Nodes\Geo::getDistance($lat, $lng, $return['lat2'], $lng),
-			'ne' => \Nodes\Geo::getDistance($lat, $lng, $return['lat2'], $return['lng2']),
-			'e' => \Nodes\Geo::getDistance($lat, $lng, $lat, $return['lng2']),
-			'se' => \Nodes\Geo::getDistance($lat, $lng, $return['lat1'], $return['lng2']),
-			's' => \Nodes\Geo::getDistance($lat, $lng, $return['lat1'], $lng),
-			'sw' => \Nodes\Geo::getDistance($lat, $lng, $return['lat1'], $return['lng1']),
-			'w' => \Nodes\Geo::getDistance($lat, $lng, $lat, $return['lng1']),
-			'nw' => \Nodes\Geo::getDistance($lat, $lng, $return['lat2'], $return['lng1'])
+			'n' => Geo::getDistance($lat, $lng, $return['lat2'], $lng),
+			'ne' => Geo::getDistance($lat, $lng, $return['lat2'], $return['lng2']),
+			'e' => Geo::getDistance($lat, $lng, $lat, $return['lng2']),
+			'se' => Geo::getDistance($lat, $lng, $return['lat1'], $return['lng2']),
+			's' => Geo::getDistance($lat, $lng, $return['lat1'], $lng),
+			'sw' => Geo::getDistance($lat, $lng, $return['lat1'], $return['lng1']),
+			'w' => Geo::getDistance($lat, $lng, $lat, $return['lng1']),
+			'nw' => Geo::getDistance($lat, $lng, $return['lat2'], $return['lng1'])
 		);
 		foreach ($distances as &$val) {
 			$val = number_format($val, 6);
@@ -130,6 +130,6 @@ class GeoTest extends CakeTestCase {
 		}
 		unset ($val);
 
-		$this->assertSame($expected, $distances);
+		$this->assertSame($expected, $distances, "Expected distances, in KM differ");
 	}
 }
