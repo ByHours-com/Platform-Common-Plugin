@@ -16,11 +16,11 @@ namespace Nodes;
 class Geo {
 
 /**
- * Mean raidus of the earth in kilometers.
+ * Mean radius of the earth in kilometers.
  *
  * @var double
  */
-	const EARTH_RADIS = 6372.797;
+	const EARTH_RADIUS = 6372.797;
 
 /**
  * Pi divided by 180 degrees. Calculated with PHP Pi constant.
@@ -105,7 +105,7 @@ class Geo {
 		$a		= sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlong / 2) * sin($dlong / 2);
 		$c		= 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-		$km		= self::EARTH_RADIS * $c;
+		$km		= self::EARTH_RADIUS * $c;
 
 		if ($kilometers) {
 			return $km;
@@ -115,7 +115,7 @@ class Geo {
 	}
 
 	protected static function _findLatBoundary($dist, $lat, &$lat1, &$lat2) {
-		$d = ($dist / static::EARTH_RADIS * 2 * M_PI) * 360;
+		$d = ($dist / static::EARTH_RADIUS * 2 * M_PI) * 360;
 		$lat1 = $lat - $d;
 		$lat2 = $lat + $d;
 
