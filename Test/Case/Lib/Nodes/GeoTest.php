@@ -46,6 +46,10 @@ class GeoTest extends CakeTestCase {
  */
 	public function testGetBoxNWSE() {
 		$expected = array(
+			'north' => 56,
+			'east' => 11,
+			'south' => 55,
+			'west' => 10,
 			'lat1' => 55,
 			'lat2' => 56,
 			'lng1' => 10,
@@ -67,6 +71,10 @@ class GeoTest extends CakeTestCase {
  */
 	public function testGetBoxSWNE() {
 		$expected = array(
+			'north' => 56,
+			'east' => 11,
+			'south' => 55,
+			'west' => 10,
 			'lat1' => 55,
 			'lat2' => 56,
 			'lng1' => 10,
@@ -88,6 +96,10 @@ class GeoTest extends CakeTestCase {
  */
 	public function testGetBoxNESW() {
 		$expected = array(
+			'north' => 56,
+			'east' => 11,
+			'south' => 55,
+			'west' => 10,
 			'lat1' => 55,
 			'lat2' => 56,
 			'lng1' => 10,
@@ -109,6 +121,10 @@ class GeoTest extends CakeTestCase {
  */
 	public function testGetBoxSENW() {
 		$expected = array(
+			'north' => 56,
+			'east' => 11,
+			'south' => 55,
+			'west' => 10,
 			'lat1' => 55,
 			'lat2' => 56,
 			'lng1' => 10,
@@ -124,6 +140,10 @@ class GeoTest extends CakeTestCase {
  */
 	public function testGetBoxFloat() {
 		$expected = array(
+			'north' => 56.123,
+			'east' => 11.456,
+			'south' => 55.123,
+			'west' => 10.456,
 			'lat1' => 55.123,
 			'lat2' => 56.123,
 			'lng1' => 10.456,

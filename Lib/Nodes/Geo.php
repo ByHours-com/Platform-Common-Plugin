@@ -67,7 +67,8 @@ class Geo {
 			list($west, $east) = array($east, $west);
 		}
 
-		$return = array(
+		$return = compact('north', 'east', 'south', 'west');
+		$return += array(
 			'lat1' => $south,
 			'lat2' => $north,
 			'lng1' => $west,
