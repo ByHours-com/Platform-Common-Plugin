@@ -35,26 +35,86 @@ class GeoTest extends CakeTestCase {
 	}
 
 /**
- * testGetBoxThrowsWithMalformedBottomRight
+ * testGetBoxNWSE
  *
- * @expectedException InvalidArgumentException
- */
-	public function testGetBoxThrowsWithNoBox() {
-		Geo::getBox('56,11', '55,10');
-	}
-
-/**
- * testGetBoxSimple
+ * For the box:
+ *  56,10-56,11
+ *  |         |
+ *  55,10-55-11
  *
+ * @return void
  */
-	public function testGetBoxSimple() {
+	public function testGetBoxNWSE() {
 		$expected = array(
-			'lat1' => 56,
-			'lat2' => 55,
+			'lat1' => 55,
+			'lat2' => 56,
 			'lng1' => 10,
 			'lng2' => 11
 		);
 		$return = Geo::getBox('56,10', '55,11');
+		$this->assertSame($expected, $return);
+	}
+
+/**
+ * testGetBoxSWNE
+ *
+ * For the box:
+ *  56,10-56,11
+ *  |         |
+ *  55,10-55-11
+ *
+ * @return void
+ */
+	public function testGetBoxSWNE() {
+		$expected = array(
+			'lat1' => 55,
+			'lat2' => 56,
+			'lng1' => 10,
+			'lng2' => 11
+		);
+		$return = Geo::getBox('55,10', '56,11');
+		$this->assertSame($expected, $return);
+	}
+
+/**
+ * testGetBoxNESW
+ *
+ * For the box:
+ *  56,10-56,11
+ *  |         |
+ *  55,10-55-11
+ *
+ * @return void
+ */
+	public function testGetBoxNESW() {
+		$expected = array(
+			'lat1' => 55,
+			'lat2' => 56,
+			'lng1' => 10,
+			'lng2' => 11
+		);
+		$return = Geo::getBox('56,11', '55,10');
+		$this->assertSame($expected, $return);
+	}
+
+/**
+ * testGetBoxSENW
+ *
+ * For the box:
+ *  56,10-56,11
+ *  |         |
+ *  55,10-55-11
+ *
+ * @return void
+ */
+	public function testGetBoxSENW() {
+		$expected = array(
+			'lat1' => 55,
+			'lat2' => 56,
+			'lng1' => 10,
+			'lng2' => 11
+		);
+		$return = Geo::getBox('55,11', '56,10');
 		$this->assertSame($expected, $return);
 	}
 
@@ -64,8 +124,8 @@ class GeoTest extends CakeTestCase {
  */
 	public function testGetBoxFloat() {
 		$expected = array(
-			'lat1' => 56.123,
-			'lat2' => 55.123,
+			'lat1' => 55.123,
+			'lat2' => 56.123,
 			'lng1' => 10.456,
 			'lng2' => 11.456
 		);

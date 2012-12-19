@@ -40,31 +40,42 @@ class Geo {
  * getBox
  *
  * For the given arguments, return the bounds of the box they contain - throw exceptions
- * if arguments are missing, malformed or illogical. The bottom right coordinate must be
- * South east of the top-left coordinate
+ * if arguments are missing.
+ *
+ * Accepts any combination of coordinates (NE, SW), (NW, SE), (SW, NE), (SE, NW)
+ *
+ * Returns coordinates equivalent to bottom-left, top-right in all cases to be consistent with
+ * getBoundary
  *
  * @throws \InvalidArgumentException if arguments are missing or malformed
- * @param mixed $topLeft e.g. 55.5,12,2
- * @param mixed $bottomRight e.g. 56.6,13.3
+ * @param mixed $cornerCoordinate e.g. 55.5,12,2
+ * @param mixed $otherCornerCoordinate e.g. 56.6,13.3
  * @return array
  */
-	public static function getBox($topLeft, $bottomRight) {
-		if (!strpos($topLeft, ',') || !strpos($bottomRight, ',')) {
+	public static function getBox($cornerCoordinate, $otherCornerCoordinate) {
+		if (!strpos($cornerCoordinate, ',') || !strpos($otherCornerCoordinate, ',')) {
 			throw new \InvalidArgumentException("Required arguments missing or malformed");
 		}
 
-		list($lat1, $lng1) = explode(',', $topLeft);
-		list($lat2, $lng2) = explode(',', $bottomRight);
+		list($north, $west) = explode(',', $cornerCoordinate);
+		list($south, $east) = explode(',', $otherCornerCoordinate);
 
-		$return = compact('lat1', 'lat2', 'lng1', 'lng2');
+		if ($north < $south) {
+			list($south, $north) = array($north, $south);
+		}
+		if ($east < $west) {
+			list($west, $east) = array($east, $west);
+		}
+
+		$return = array(
+			'lat1' => $south,
+			'lat2' => $north,
+			'lng1' => $west,
+			'lng2' => $east
+		);
 		foreach ($return as &$val) {
 			$val += 0;
 		}
-
-		if ($lng1 >= $lng2 || $lat1 <= $lat2) {
-			throw new \InvalidArgumentException("Arguments do not define a box ([$topLeft] [$bottomRight]), bottom-right must be south-east of the top-left coordinate");
-		}
-
 		return $return;
 	}
 
@@ -80,7 +91,8 @@ class Geo {
 		static::_findLatBoundary($dist, $lat, $lat1, $lat2);
 		static::_findLonBoundary($dist, $lat, $lng, $lat1, $lat2, $lng1, $lng2);
 
-		return compact('lat1', 'lat2', 'lng1', 'lng2');
+		$return = compact('lat1', 'lat2', 'lng1', 'lng2');
+		return $return;
 	}
 
 /**
