@@ -88,33 +88,37 @@ class Geo {
  * @return array
  */
 	public static function getBoundary($dist, $lat, $lng) {
-		static::_findLatBoundary($dist, $lat, $lat1, $lat2);
-		static::_findLonBoundary($dist, $lat, $lng, $lat1, $lat2, $lng1, $lng2);
+		static::_findLatBoundary($dist, $lat, $south, $north);
+		static::_findLonBoundary($dist, $lat, $lng, $south, $north, $west, $east);
 
-		$return = compact('lat1', 'lat2', 'lng1', 'lng2');
-		return $return;
+		return array(
+			'lat1' => $south,
+			'lat2' => $north,
+			'lng1' => $west,
+			'lng2' => $east
+		);
 	}
 
 /**
  * Calculate distance between two points of latitude and longitude.
  *
- * @param double $lat1 The first point of latitude.
- * @param double $lng1 The first point of longitude.
- * @param double $lat2 The second point of latitude.
- * @param double $lng2 The second point of longitude.
+ * @param double $south The first point of latitude.
+ * @param double $west The first point of longitude.
+ * @param double $north The second point of latitude.
+ * @param double $east The second point of longitude.
  * @param bool $kilometers Set to false to return in miles.
  * @return double The distance in kilometers or mt, whichever selected.
  */
-	public static function getDistance($lat1, $lng1, $lat2, $lng2, $kilometers = true) {
-		$lat1	*= self::PI180;
-		$lng1	*= self::PI180;
-		$lat2	*= self::PI180;
-		$lng2	*= self::PI180;
+	public static function getDistance($south, $west, $north, $east, $kilometers = true) {
+		$south	*= self::PI180;
+		$west	*= self::PI180;
+		$north	*= self::PI180;
+		$east	*= self::PI180;
 
-		$dlat	= $lat2 - $lat1;
-		$dlong	= $lng2 - $lng1;
+		$dlat	= $north - $south;
+		$dlong	= $east - $west;
 
-		$a		= sin($dlat / 2) * sin($dlat / 2) + cos($lat1) * cos($lat2) * sin($dlong / 2) * sin($dlong / 2);
+		$a		= sin($dlat / 2) * sin($dlat / 2) + cos($south) * cos($north) * sin($dlong / 2) * sin($dlong / 2);
 		$c		= 2 * atan2(sqrt($a), sqrt(1 - $a));
 
 		$km		= self::EARTH_RADIUS * $c;
@@ -126,27 +130,27 @@ class Geo {
 		return $km * self::MT;
 	}
 
-	protected static function _findLatBoundary($dist, $lat, &$lat1, &$lat2) {
+	protected static function _findLatBoundary($dist, $lat, &$south, &$north) {
 		$d = ($dist / static::EARTH_RADIUS * 2 * M_PI) * 360;
-		$lat1 = $lat - $d;
-		$lat2 = $lat + $d;
+		$south = $lat - $d;
+		$north = $lat + $d;
 
-		if ($lat1 > $lat2) {
-			list($lat1, $lat2) = array($lat2, $lat1);
+		if ($south > $north) {
+			list($south, $north) = array($north, $south);
 		}
 	}
 
-	protected static function _findLonBoundary($dist, $lat, $lng, $lat1, $lat2, &$lng1, &$lng2) {
-		$d = $lat - $lat1;
+	protected static function _findLonBoundary($dist, $lat, $lng, $south, $north, &$west, &$east) {
+		$d = $lat - $south;
 
-		$d1 = $d / cos(deg2rad($lat1));
-		$d2 = $d / cos(deg2rad($lat2));
+		$d1 = $d / cos(deg2rad($south));
+		$d2 = $d / cos(deg2rad($north));
 
-		$lng1 = min($lng - $d1, $lng - $d2);
-		$lng2 = max($lng + $d1, $lng + $d2);
+		$west = min($lng - $d1, $lng - $d2);
+		$east = max($lng + $d1, $lng + $d2);
 
-		if ($lng1 > $lng2) {
-			list($lng1, $lng2) = array($lng2, $lng1);
+		if ($west > $east) {
+			list($west, $east) = array($east, $west);
 		}
 	}
 }
