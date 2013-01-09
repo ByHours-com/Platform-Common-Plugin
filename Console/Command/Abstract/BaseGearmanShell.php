@@ -37,6 +37,9 @@ abstract class BaseGearmanShell extends AppShell {
 		$parser = parent::getOptionParser();
 		return $parser
 			->description('Setup a Gearman server for running the subtasks')
+			->addOption('process_id', array(
+				'help' => 'A process identifier to make locking work with SupervisorD'
+			))
 			->addSubCommand('server', array(
 				'help' => 'Starts a gearman worker server with all the function listeners found in task classes',
 			));
