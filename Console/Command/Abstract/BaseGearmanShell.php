@@ -1,5 +1,9 @@
 <?php
 
+App::uses('ClassRegistry', 'Utility');
+App::uses('Hash', 'Utility');
+App::uses('Inflector', 'Utility');
+
 /**
  * Shell for starting up a Gearman shell.
  *
