@@ -154,10 +154,16 @@ class CronjobShell extends AppShell {
  * @return void
  */
 	public function export() {
+		$this->out('');
+		$this->out('---------------------------------');
+		$this->out('Exporting cronjobs');
+		$this->out('---------------------------------');
+		$this->out('');
+
 		$existingCronjobs	= $this->_loadExistingCronjobs();
 		$application = $this->_loadApplicationCronjobs();
 
-		foreach ($existingCronjobs as $name => $value) {
+		foreach ($existingCronjobs as $name => $cronjob) {
 			// Skip cronjobs that doesn't match our own project name
 			$pattern = '/^# ' . Nodes\Environment::getProjectName() . ' \- /sim';
 			if (false === preg_match($pattern, $name)) {
@@ -173,7 +179,9 @@ class CronjobShell extends AppShell {
 
 		// Merge our cronjobs.json into the existing list
 		$existingCronjobs += $application;
+
 		$this->_writeCrontabFile($existingCronjobs);
+		$this->out('Done.');
 	}
 
 /**
@@ -277,7 +285,12 @@ class CronjobShell extends AppShell {
 		$tmp = tempnam(TMP, 'cron_');
 		file_put_contents($tmp, $content);
 		$result = Nodes\Command::execute('crontab ' . $tmp);
-		var_dump($result);
+		unlink($tmp);
+		if ($result['exit_code'] == 0) {
+			return true;
+		}
+
+		$this->error('Failed to update crontab', $result['stderr']);
 	}
 
 }
