@@ -278,6 +278,8 @@ class CronjobShell extends AppShell {
 			$lines[] = $name;
 			$lines[] = $command;
 		}
+
+		// Crontab requires a newline before EOF
 		$lines[] = "";
 
 		$content = implode("\n", $lines);
