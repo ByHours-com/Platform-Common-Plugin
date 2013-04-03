@@ -103,10 +103,6 @@ class Curl {
  */
 	public function get($data = null) {
 		if (!empty($data)) {
-			if (is_array($data)) {
-				$data = http_build_query($data);
-			}
-
 			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
 		}
 
@@ -123,10 +119,6 @@ class Curl {
  */
 	public function post($data = array()) {
 		if (!empty($data)) {
-			if (is_array($data)) {
-				$data = http_build_query($data);
-			}
-
 			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
 		}
 
@@ -142,10 +134,6 @@ class Curl {
  */
 	public function put($data = array()) {
 		if (!empty($data)) {
-			if (is_array($data)) {
-				$data = http_build_query($data);
-			}
-
 			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
 		}
 
@@ -160,10 +148,6 @@ class Curl {
  */
 	public function delete($data = null) {
 		if (!empty($data)) {
-			if (is_array($data)) {
-				$data = http_build_query($data);
-			}
-
 			$this->_curlOptions = array(CURLOPT_POSTFIELDS => $data) + $this->_curlOptions;
 		}
 
