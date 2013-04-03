@@ -344,13 +344,16 @@ class MenuHelper extends AppHelper {
  * @return string
  */
 	protected function _display($items, $options = array()) {
+		$options = $options + array('escape' => false, 'tag' => 'ul');
+		$tag = $options['tag'];
+		unset($options['tag']);
+
 		$return = '';
 		foreach ($items as $item) {
 			$return .= $this->_displayItem($item);
 		}
 
-		$options['escape'] = false;
-		$return = $this->Html->tag('ul', $return, $options);
+		$return = $this->Html->tag($tag, $return, $options);
 		return $return;
 	}
 
