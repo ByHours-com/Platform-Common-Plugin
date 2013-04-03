@@ -186,6 +186,24 @@ class MenuHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testDisplaySpecifiedTag
+ *
+ * @return void
+ */
+	public function testDisplaySpecifiedTag() {
+		$this->Menu->add(array(
+			array('title', '/url'),
+			array('title2', '/url/2')
+		));
+		$expected = '<menu>' .
+			'<li><a href="/url">title</a></li>' .
+			'<li><a href="/url/2">title2</a></li>' .
+			'</menu>';
+		$result = $this->Menu->display(null, array('tag' => 'menu'));
+		$this->assertSame($expected, $result);
+	}
+
+/**
  * testDisplayCallback
  *
  * @return void
