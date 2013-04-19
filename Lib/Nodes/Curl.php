@@ -1,6 +1,11 @@
 <?php
 namespace Nodes;
 
+use \App;
+use \Hash;
+
+App::uses('Hash', 'Utility');
+
 /**
  * cURL class helper
  *
@@ -169,8 +174,18 @@ class Curl {
 			$this->_curlOptions = array(CURLOPT_HEADERFUNCTION => array($this, 'curlHeaderCallback')) + $this->_curlOptions;
 		}
 
-		curl_setopt_array($this->_curlResource, $this->_curlOptions);
+		// Multidimensional arrays need to be converted to a query string as there is no built-in support for it
+		// This unfortunately makes it impossible to post files in a multidimensional array without extra work
+		if (!empty($this->_curlOptions[CURLOPT_POSTFIELDS]) && is_array($this->_curlOptions[CURLOPT_POSTFIELDS])) {
+			foreach ($this->_curlOptions[CURLOPT_POSTFIELDS] as $f => $v) {
+				if (is_array($v)) {
+					$this->_curlOptions[CURLOPT_POSTFIELDS] = http_build_query($this->_curlOptions[CURLOPT_POSTFIELDS]);
+					break;
+				}
+			}
+		}
 
+		curl_setopt_array($this->_curlResource, $this->_curlOptions);
 		return $this;
 	}
 
