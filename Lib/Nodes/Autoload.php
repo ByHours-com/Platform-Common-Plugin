@@ -33,6 +33,9 @@ class Autoload {
 		if (false === strstr($class, '\\') && substr_count($class, '_') < 1) {
 			return false;
 		}
+		if (strpos($class, 'PHPUnit') === 0) {
+			return false;
+		}
 
 		// Scan the filesystem for the php file
 		$path = static::_path($class);
