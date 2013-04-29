@@ -30,7 +30,7 @@ class Autoload {
  */
 	public static function load($class) {
 		// Only load namespaced classes and classes with two underscores (Zend_* and friends)
-		if (false === strstr($class, '\\') && substr_count($class, '_') < 2) {
+		if (false === strstr($class, '\\') && substr_count($class, '_') < 1) {
 			return false;
 		}
 
@@ -48,8 +48,8 @@ class Autoload {
  * @return boolean
  */
 	protected static function _path($className) {
-		// Check if class looks like a Zend_* class nameing
-		if (substr_count($className, '_') > 1) {
+		// Check if class looks like a Zend_* class naming
+		if (substr_count($className, '_') > 0) {
 			// Convert underscores to DIRECTORY_SEPARATOR in paths
 			$filename = str_replace('_', DS, $className) . '.php';
 			// Search include_paths
