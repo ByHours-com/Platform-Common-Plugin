@@ -57,7 +57,7 @@ class Javascript {
  * @return mixed
  */
 	protected static function _executeCallbacks($value) {
-		if (is_callable($value)) {
+		if (is_object($value) && ($value instanceof Closure)) {
 			return call_user_func($value);
 		}
 
