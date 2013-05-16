@@ -14,14 +14,30 @@ App::uses('Inflector', 'Utility');
 abstract class BaseGearmanShell extends AppShell {
 
 /**
- * Lists of tasks
+ * __construct
  *
- * @return void
+ * Ensure that required tasks are loaded, account for simple declaration
+ * or declaring with options
+ *
+ * @param mixed $stdout
+ * @param mixed $stderr
+ * @param mixed $stdin
  */
-	public $tasks = array(
-		'Common.ProccessManagement',
-		'Common.GearmanWorker'
-	);
+	public function __construct($stdout = null, $stderr = null, $stdin = null) {
+		$requiredTasks = array(
+			'Common.ProccessManagement',
+			'Common.GearmanWorker'
+		);
+
+		$existingTasks = TaskCollection::normalizeObjectArray($this->tasks);
+		foreach ($requiredTasks as $task) {
+			list(, $name) = pluginSplit($task);
+			if (!isset($existingTasks[$name])) {
+				$this->tasks[] = $task;
+			}
+		}
+		parent::__construct($stdout, $stderr, $stdin);
+	}
 
 /**
  * Internal stored instance of a GearmanWorker

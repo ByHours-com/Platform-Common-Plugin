@@ -47,7 +47,11 @@ class Javascript {
 	public static function getConfiguration() {
 		$all = \Configure::read('Javascript');
 
-		return array_map('static::_executeCallbacks', $all);
+		if (is_array($all)) {
+			$all = array_map('static::_executeCallbacks', $all);
+		}
+
+		return $all;
 	}
 
 /**
