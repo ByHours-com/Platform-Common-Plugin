@@ -13,28 +13,6 @@ namespace Nodes;
 class Common {
 
 /**
- * Verify if a string is a valid UUID string
- *
- * TODO Use Validation::uuuid
- * @param string $str The string to validate
- * @param boolean $nullIsValid If $str is null, should it be considered valid?
- * @return boolean
- */
-	public static function validUUID($str, $nullIsValid = false) {
-		// Check if we got a NULL case
-		if ($nullIsValid && empty($str)) {
-			return true;
-		}
-
-		// Quick checks
-		if (!is_string($str) || strlen($str) !== 36) {
-			return false;
-		}
-
-		return preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $str);
-	}
-
-/**
  * Try to extract a key from CakePHPs param array
  *
  * A named key can be in two places, in root of $params or inside $params['named']
