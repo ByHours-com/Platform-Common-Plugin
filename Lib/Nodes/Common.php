@@ -12,37 +12,6 @@ namespace Nodes;
  */
 class Common {
 
-	public static function autoLinkText($text, $options = array()) {
-		static $Html;
-
-		if (!$Html) {
-			if (!class_exists('HtmlHelper', false)) {
-				\App::import('Helper', 'Html');
-			}
-
-			$Html = new \HtmlHelper();
-			$Html->tags = $Html->loadConfig();
-		}
-
-		// Email
-		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
-		$text = preg_replace_callback('/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)*)/i', function($matches) use ($Html, $options) {
-			return $Html->link($matches[0], "mailto:" . $matches[0], $options);
-		}, $text);
-
-		// http / web
-		$text = preg_replace_callback('#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i', function($matches) use ($Html, $options) {
-			return $Html->link($matches[0], $matches[0], $options);
-		}, $text);
-
-		// http / web - part 2
-		$text = preg_replace_callback('#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i', function($matches) use ($Html, $options) {
-			return $Html->link($matches[0], "http://" . $matches[0], $options);
-		}, $text);
-
-		return $text;
-	}
-
 /**
  * Verify if a string is a valid UUID string
  *
