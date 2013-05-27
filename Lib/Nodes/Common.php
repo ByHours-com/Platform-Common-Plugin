@@ -34,37 +34,6 @@ class Common {
 	}
 
 /**
- * Used primary for the admin menu, to see if Controller ($object) and Action ($property)
- * is present in a comma-separated list - with support for wildcards
- *
- * @param string $object
- * @param string $property
- * @param string $rules
- * @param boolean $allowed
- * @return boolean
- */
-	public static function requestAllowed($object, $property, $rules, $allowed = false) {
-		preg_match_all('/\s?(!?[^:,]+):([^,:]+)/is', $rules, $matches, PREG_SET_ORDER);
-		foreach ($matches as $match) {
-			list ( $rawMatch, $allowedObject, $allowedProperty ) = $match;
-
-			$allowedObject = str_replace('*', '.*', $allowedObject);
-			$allowedProperty = str_replace('*', '.*', $allowedProperty);
-
-			$negativeCondition = false;
-			if (substr($allowedObject, 0, 1) == '!') {
-				$allowedObject = substr($allowedObject, 1);
-				$negativeCondition = true;
-			}
-
-			if (preg_match('/^' . $allowedObject . '$/i', $object) && preg_match('/^' . $allowedProperty . '$/i', $property)) {
-				$allowed = !$negativeCondition;
-			}
-		}
-		return $allowed;
-	}
-
-/**
  * Remove app absolute paths and strip them down to constant strings
  *
  * Its used to avoid information leak about the platform and hosting envoriment
@@ -89,31 +58,6 @@ class Common {
 		$str = str_replace(realpath(WEBROOT_DIR), 'WEBROOT_DIR/', $str);
 
 		return $str;
-	}
-
-/**
- * Check if a string can be evaluated to boolean
- *
- * @param mixed $str
- * @param array $additionalTrueValues List of additional values that should evaluate to true
- * @param boolean $default Default boolean return value
- * @return boolean TRUE if the $str exists in $trueList
- */
-	public static function evaluateBoolean($str, $additionalTrueValues = array(), $default = false) {
-		$trueList = array(true, 1, '1', 'y', 'yes', 'true', 'ja', 'on');
-
-		// Merge additional true values if needed
-		if (is_array($additionalTrueValues) && !empty($additionalTrueValues)) {
-			$trueList = array_merge($trueList, $additionalTrueValues);
-		}
-
-		// Check if $str can be evaluated to true
-		if (false !== array_search($str, $trueList, true)) {
-			return true;
-		}
-
-		// Or return default value
-		return $default;
 	}
 
 /**
